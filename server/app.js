@@ -10,18 +10,29 @@ app.use(index);
 
 const server = http.createServer(app);
 
-const io = socketIo(server); // < Interesting!
+const io = socketIo(server); 
 
 const getApiAndEmit = socket => {
     const response = new Date();
     // Emitting a new message. Will be consumed by the client
-    socket.emit("FromAPI", response);
+    socket.emit("logsUpdate", response);
   };
 
 let interval;
 
 io.on("connection", (socket) => {
   console.log("New client connected");
+  
+  io.on('message', (data) => {
+    console.log("new message received");
+    console.log(data)
+    })
+
+    io.on('newCalculation', (data) => {
+        console.log("newCalculation received");
+        console.log(data)
+    })
+
   if (interval) {
     clearInterval(interval);
   }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './InputBar.css'
+import socketIOClient from "socket.io-client";
 
 export default class InputBar extends Component {
     constructor(props){
@@ -57,6 +58,13 @@ export default class InputBar extends Component {
         }
         let result_string = this.state.textInput.concat(" = " + current_result)
         this.setState({textInput:result_string});
+        
+        // TODO: notify server
+        console.log(this.props.socket)
+        const ENDPOINT = "http://127.0.0.1:4001";
+        let socket = socketIOClient(ENDPOINT);
+        socket.send(result_string);
+        socket.emit('newCalculation', result_string);
         console.log(current_result)
     }
 
@@ -69,7 +77,7 @@ export default class InputBar extends Component {
                     <button className="btn btn-outline-secondary" type="button" onClick={() => this.calculate()}>Calculate</button>
                 </div>
             </div>
-            <p class="text-danger">{this.state.errorMessage}</p>
+            <p className="text-danger">{this.state.errorMessage}</p>
             </div>
         )
     }
