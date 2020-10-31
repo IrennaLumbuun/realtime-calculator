@@ -1,16 +1,10 @@
-const express = require("express");
-const http = require("http");
-const socketIo = require("socket.io");
+const { Console } = require("console");
+
+const app = require("express")();
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
 
 const port = process.env.PORT || 4001;
-const index = require("./routes/index");
-
-const app = express();
-app.use(index);
-
-const server = http.createServer(app);
-
-const io = socketIo(server); 
 
 const getApiAndEmit = socket => {
     const response = new Date();
@@ -19,19 +13,19 @@ const getApiAndEmit = socket => {
   };
 
 let interval;
+let logs = [];
 
 io.on("connection", (socket) => {
   console.log("New client connected");
-  
-  io.on('message', (data) => {
-    console.log("new message received");
-    console.log(data)
-    })
+  socket.emit("update", logs);
 
-    io.on('newCalculation', (data) => {
-        console.log("newCalculation received");
-        console.log(data)
-    })
+   socket.on('newCalculation', (data) => {
+      logs.push(data);
+      if (logs.length > 10){
+         logs = logs.slice(1,)
+      } 
+      socket.emit("update", logs);
+  });
 
   if (interval) {
     clearInterval(interval);
@@ -43,4 +37,4 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(port, () => console.log(`Listening on port ${port}`));
+http.listen(port, () => console.log(`Listening on port ${port}`));

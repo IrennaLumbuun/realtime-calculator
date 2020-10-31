@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 
 export default class CalculationLogs extends Component {
-    // constructor(props){
-    //     super(props);
-    //     this.state = {
-    //         logs: []
-    //     }
-    // }
-
     render() {
+        if (this.props.logs.length == 0){
+            return (
+                <p>Uh, very empty. Try the calculator!</p>
+            )
+        }
         return(
             <ul id="calculationLog" className="list-group">
                 {this.props.logs.map(log => 
