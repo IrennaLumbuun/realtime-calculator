@@ -1,5 +1,6 @@
 # Try it Out!
-https://calculator-sezzle-2020.herokuapp.com/
+https://calculator-sezzle-2020.herokuapp.com/  
+**See demo**: [Issue #1](https://github.com/IrennaLumbuun/sezzle-2020-calculator/issues/1)
 
 ## How to run in local machine
 1. Clone this git repository
