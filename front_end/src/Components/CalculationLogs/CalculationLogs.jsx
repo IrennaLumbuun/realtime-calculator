@@ -9,7 +9,7 @@ export default class CalculationLogs extends Component {
         }
         return(
             <ul id="calculationLog" className="list-group">
-                {this.props.logs.map(log => 
+                {this.props.logs.reverse().map(log => 
                     <li class="list-group-item">{log}</li>
                     )}
             </ul>
