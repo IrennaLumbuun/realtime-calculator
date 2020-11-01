@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
-import './InputBar.css'
+import './InputBar.css';
+import { create, all } from 'mathjs';
+
+const config = { }
+const math = create(all, config)
 
 export default class InputBar extends Component {
     constructor(props){
@@ -21,50 +25,15 @@ export default class InputBar extends Component {
     calculate = () => {
         // step 0: set error message back to ''
         this.setState({errorMessage: ""});
-        // step 1: parse index of every operators
-        let operators = [];
-        for (let i = 0; i < this.state.textInput.length; i++){
-            let c = this.state.textInput.charAt(i)
-            if (c >= 'A' && c <= 'z'){
-                this.setState({errorMessage: "ERROR: Cannot process non-numeric characters"});
-                return;
-            }
-            else if(!((c >= '0' && c <= '9') || c === ' '))
-                operators.push(i) // push location of operator
+        try {
+            let current_result = math.evaluate(this.state.textInput);
+            let result_string = this.state.textInput.concat("= " + current_result);
+            this.setState({textInput:result_string});
+            this.props.socket.emit('newCalculation', result_string);
         }
-
-        // if no operators were inputted
-        if (operators.length === 0){
-            this.setState({errorMessage: "ERROR: No operators were specified"});
-            return;
+        catch (err) {
+            this.setState({errorMessage: "ERROR: "+ err});
         }
-
-        // step 2: do calculations accordingly
-        let current_result = parseInt(this.state.textInput.substring(0, operators[0]))
-        for (let i = 0; i< operators.length; i++){
-            let index_operator = operators[i]
-            let end_index = (i === operators.length - 1 ? this.state.textInput.length : operators[i + 1])
-            let next_num = parseInt(this.state.textInput.substring(operators[i] + 1, end_index))
-
-            // check operator
-            if (this.state.textInput[index_operator] === '+')
-                current_result += next_num
-            else if (this.state.textInput[index_operator] === '-')
-                current_result -= next_num
-            else if (this.state.textInput[index_operator] === '*')
-                current_result *= next_num
-            else if (this.state.textInput[index_operator] === '/')
-                current_result /= next_num
-            else {
-                this.setState({errorMessage: "ERROR: Unknown operator"});
-                return;
-            }
-        }
-        let result_string = this.state.textInput.concat(" = " + current_result)
-        this.setState({textInput:result_string});
-        
-        // step 3: notify server
-        this.props.socket.emit('newCalculation', result_string);
     }
 
     render() {
