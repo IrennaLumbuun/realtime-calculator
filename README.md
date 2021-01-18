@@ -1,6 +1,3 @@
-# Sezzle-2020-Calculator
-This is the source code for my sezzle take-home coding project. 
-
 ## What it does
 A web app that logs calculations as they happen and shares those calculations with everyone connected to the app.  
   
